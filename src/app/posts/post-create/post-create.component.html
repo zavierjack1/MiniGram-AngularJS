@@ -1,3 +1,14 @@
-<textarea rows="6"></textarea>
-<hr>
-<button (click)="onAddPost()">Save Posts</button>
+<!--ngModel is for two way binding and must be added to imports in app.module.ts-->
+<mat-card>
+    <mat-form-field>
+        <textarea matInput rows="6" [(ngModel)]="enteredValue"></textarea>
+    </mat-form-field>
+    <button 
+        mat-raised-button 
+        color="accent" 
+        (click)="onAddPost()">Save Posts
+    </button>
+</mat-card>
+<p>{{getNewPost()}}</p><!--the {{}} allows you to call function or grab attrib directly-->
+
+
