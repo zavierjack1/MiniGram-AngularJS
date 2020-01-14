@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Post } from '../post.model';
 
 @Component({
     selector: 'app-post-list',
@@ -6,7 +7,7 @@ import { Component, Input } from '@angular/core';
     styleUrls: ['/post-list.component.css']
 })
 export class PostListComponent{
-    @Input() posts = []; //input means it can bind to variables from the parent component
+    @Input() posts: Post[] = []; //input means it can bind to variables from the parent component
  
     
     // posts = [
