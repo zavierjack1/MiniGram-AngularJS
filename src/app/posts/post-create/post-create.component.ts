@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { Post } from '../post.model';
+import { NgForm, FormControl } from '@angular/forms';
 
 @Component({
     selector: 'app-post-create',
@@ -7,17 +8,23 @@ import { Post } from '../post.model';
     styleUrls: ['./post-create.component.css']
 })
 export class PostCreateComponent{
-    enteredTitle=""
-    enteredContent=""
+
     @Output() postCreated = new EventEmitter<Post>();
-    onAddPost(){
+
+    onAddPost(form: NgForm){
+        if (form.invalid) return;
+        
         const post: Post = {
-            title: this.enteredTitle,
-            content: this.enteredContent
+            title: form.value.title,
+            content: form.value.content
         }
 
         console.log(post.title)
 
         this.postCreated.emit(post);
-    }   
+    }  
+    getTitleError(){
+        return "You've entered a bad message";
+    }
 }
+

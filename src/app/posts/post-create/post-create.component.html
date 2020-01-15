@@ -1,15 +1,28 @@
 <!--ngModel is for two way binding and must be added to imports in app.module.ts-->
 <mat-card>
-    <mat-form-field>
-        <input matInput [(ngModel)]="enteredTitle">
-    </mat-form-field>
-    <mat-form-field>
-        <textarea matInput rows="6" [(ngModel)]="enteredContent"></textarea>
-    </mat-form-field>
-    <button 
-        mat-raised-button 
-        color="accent" 
-        (click)="onAddPost()">Save Posts
-    </button>
+    <form (submit)="onAddPost(postForm)" #postForm="ngForm"><!--#postForm="ngForm" gives us access to the FORM (built in functionality with Angular)-->
+        <mat-form-field>
+            <input matInput type="text" ngModel name="title"
+            placeholder="Please enter title of post"
+            required minlength="3"
+            #title="ngModel" 
+            ><!--#title creates a variable that accesses the model metadata for the form-->
+            <!--using ngForm.getControl('').invalid should work but required onInit-->
+            <mat-error *ngIf="title.invalid" ng-controller="post-create.component">{{ getTitleError() }}</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <textarea matInput type="text" ngModel name="content" 
+            rows="3"
+            #content="ngModel"
+            ></textarea>
+            <mat-error *ngIf="content.invalid">This is an invalid message</mat-error>
+        </mat-form-field>
+        <button 
+            mat-raised-button 
+            color="accent" 
+            type="submit">
+            Save Posts
+        </button>
+    </form>
 </mat-card>
 
