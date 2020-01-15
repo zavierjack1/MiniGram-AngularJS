@@ -1,15 +1,18 @@
-import { Component, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit } from '@angular/core';
 import { Post } from '../post.model';
 import { NgForm, FormControl } from '@angular/forms';
+import { PostService } from '../post.service';
 
 @Component({
     selector: 'app-post-create',
     templateUrl: './post-create.component.html',
     styleUrls: ['./post-create.component.css']
 })
-export class PostCreateComponent{
-
-    @Output() postCreated = new EventEmitter<Post>();
+export class PostCreateComponent {
+    postService: PostService;
+    constructor(postService: PostService){
+        this.postService = postService;
+    }
 
     onAddPost(form: NgForm){
         if (form.invalid) return;
@@ -19,10 +22,9 @@ export class PostCreateComponent{
             content: form.value.content
         }
 
-        console.log(post.title)
-
-        this.postCreated.emit(post);
+        this.postService.addPost(post);
     }  
+
     getTitleError(){
         return "You've entered a bad message";
     }
