@@ -10,3 +10,5 @@ npm install --save @angular/material
 
 npm install --save @angular/material
 ng add @angular/material #this is an angular CLI command
+
+docker run -dit --name my_angular -p 8080:8080 -v $(pwd)/AngularApp:/AngularApp zavierjack1/node_w_angular:latest

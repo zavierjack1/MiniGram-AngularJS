@@ -10,6 +10,7 @@ import { PostService } from '../post.service';
 })
 export class PostCreateComponent {
     postService: PostService;
+    counter: number = 0;
     constructor(postService: PostService){
         this.postService = postService;
     }
@@ -18,6 +19,7 @@ export class PostCreateComponent {
         if (form.invalid) return;
         
         const post: Post = {
+            id: (this.counter++).toString(),
             title: form.value.title,
             content: form.value.content
         }

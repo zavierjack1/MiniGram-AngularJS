@@ -3,7 +3,7 @@
     <form (submit)="onAddPost(postForm)" #postForm="ngForm"><!--#postForm="ngForm" gives us access to the FORM (built in functionality with Angular)-->
         <mat-form-field>
             <input matInput type="text" ngModel name="title"
-            placeholder="*Post Title"
+            placeholder="Post Title"
             required minlength="3"
             #title="ngModel" 
             ><!--#title creates a variable that accesses the model metadata for the form-->
@@ -14,7 +14,8 @@
             <textarea matInput type="text" ngModel name="content" 
             rows="3"
             #content="ngModel"
-            placeholder="*Post Content"
+            placeholder="Post Content"
+            required
             ></textarea>
             <mat-error *ngIf="content.invalid">This is an invalid message</mat-error>
         </mat-form-field>
