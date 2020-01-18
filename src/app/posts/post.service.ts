@@ -26,7 +26,14 @@ export class PostService{
     }
 
     addPost(post: Post){
-        this.posts.push(post);
-        this.postUpdated.next([...this.posts]);
+        //remember this Express server happens to live at 0.0.0.0 we'll want to 
+        //pass in a env variable at run time with the public IP of the Express server
+        this.httpClient.post<{message:string}>('http://0.0.0.0:8081/api/posts', post)
+        .subscribe((responseData) =>{
+            console.log(responseData.message);
+            //push new post to local posts array only if HTTP call works
+            this.posts.push(post);
+            this.postUpdated.next([...this.posts]);
+        });
     }
 }
