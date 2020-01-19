@@ -19,7 +19,6 @@ export class PostListComponent implements OnInit, OnDestroy{
     posts: Post[] = []; //input means it can bind to variables from the parent component
 
     ngOnInit(): void {
-        console.log("in init");
         this.postService.getPosts();
         this.postService.getPostUpdatedListener()
             .subscribe((posts: Post[]) =>{
@@ -29,5 +28,9 @@ export class PostListComponent implements OnInit, OnDestroy{
 
     ngOnDestroy(): void {
         this.postsSubscription.unsubscribe();
+    }
+
+    onDelete(postId: String){ 
+        this.postService.deletePost(postId);
     }
 }
