@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs' //Subject is similar to an EventEmitter
 import { map } from 'rxjs/operators' //
 import { HttpClient } from '@angular/common/http';
-import { JsonPipe } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Injectable({providedIn: 'root'})
 export class PostService{
@@ -11,12 +11,11 @@ export class PostService{
     private postUpdated = new Subject<Post[]>();
     private httpClient: HttpClient;
 
-    constructor( httpClient: HttpClient){
+    constructor( httpClient: HttpClient, private router: Router){
         this.httpClient = httpClient;
     }
 
     getPosts(){
-        //this.httpClient.get<{message: string, posts: Post[]}>('http://0.0.0.0:8081/api/posts')
         this.httpClient.get<{message: string, posts: any}>('http://0.0.0.0:8081/api/posts')
             .pipe(map((postData) => {
                 return postData.posts.map(post => {
@@ -33,6 +32,10 @@ export class PostService{
             });
     }
 
+    getPost(id: string){
+        return this.httpClient.get<{_id: string, title: string, content: string}>('http://0.0.0.0:8081/api/posts/'+id);
+    }
+
     getPostUpdatedListener(){
         return this.postUpdated.asObservable();
     }
@@ -43,21 +46,30 @@ export class PostService{
         this.httpClient.post<{message:string, postId:string}>('http://0.0.0.0:8081/api/posts', post)
         .subscribe((responseData) =>{
             console.log(responseData.message);
-            const id = responseData.postId;
-            post.id = id;
-            //push new post to local posts array only if HTTP call works
+            post.id = responseData.postId;
             this.posts.push(post);
             this.postUpdated.next([...this.posts]);
+            this.router.navigate(['/']);
         });
     }
 
-    deletePost(postId: String){
-        console.log("postId: "+postId);
+    deletePost(postId: string){
         this.httpClient.delete<{message: string}>('http://0.0.0.0:8081/api/posts/'+postId)
         .subscribe((responseData) => {
             console.log(responseData.message);
             this.posts = this.posts.filter(post => post.id !== postId);
             this.postUpdated.next([...this.posts]);
         });
+    }
+
+    updatePost(post: Post){
+        this.httpClient.put<{message: string}>('http://0.0.0.0:8081/api/posts/'+post.id, post)
+            .subscribe((responseData) => {
+                console.log(responseData.message);
+                const updatedIndex = this.posts.findIndex(p => p.id === post.id);
+                this.posts[updatedIndex] = post;
+                this.postUpdated.next([...this.posts]);
+                this.router.navigate(['/']);
+            });        
     }
 }

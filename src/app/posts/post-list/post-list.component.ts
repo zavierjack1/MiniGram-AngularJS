@@ -11,6 +11,7 @@ import { Subscription } from 'rxjs';
 export class PostListComponent implements OnInit, OnDestroy{
     postService: PostService;
     private postsSubscription: Subscription;
+    private isLoading = false;
 
     constructor(postService: PostService){
         this.postService = postService;
@@ -19,10 +20,12 @@ export class PostListComponent implements OnInit, OnDestroy{
     posts: Post[] = []; //input means it can bind to variables from the parent component
 
     ngOnInit(): void {
+        this.isLoading = true;
         this.postService.getPosts();
         this.postsSubscription = this.postService.getPostUpdatedListener()
             .subscribe((posts: Post[]) =>{
                 this.posts = posts;
+                this.isLoading = false;
             }) ;
     }
 
@@ -30,7 +33,7 @@ export class PostListComponent implements OnInit, OnDestroy{
         this.postsSubscription.unsubscribe();
     }
 
-    onDelete(postId: String){ 
+    onDelete(postId: string){ 
         this.postService.deletePost(postId);
     }
 }

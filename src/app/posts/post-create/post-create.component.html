@@ -1,8 +1,13 @@
 <!--ngModel is for two way binding and must be added to imports in app.module.ts-->
 <mat-card>
-    <form (submit)="onAddPost(postForm)" #postForm="ngForm"><!--#postForm="ngForm" gives us access to the FORM (built in functionality with Angular)-->
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
+    <form (submit)="onSavePost(postForm)" #postForm="ngForm" *ngIf="!isLoading">
         <mat-form-field>
-            <input matInput type="text" ngModel name="title"
+            <input 
+            matInput 
+            type="text" 
+            name="title"
+            [ngModel]="post?.title" 
             placeholder="Post Title"
             required minlength="3"
             #title="ngModel" 
@@ -11,7 +16,11 @@
             <mat-error *ngIf="title.invalid" ng-controller="post-create.component">{{ getTitleError() }}</mat-error>
         </mat-form-field>
         <mat-form-field>
-            <textarea matInput type="text" ngModel name="content" 
+            <textarea 
+            matInput 
+            type="text" 
+            name="content"
+            [ngModel]="post?.content"
             rows="3"
             #content="ngModel"
             placeholder="Post Content"
