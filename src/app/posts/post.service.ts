@@ -4,6 +4,7 @@ import { Subject } from 'rxjs' //Subject is similar to an EventEmitter
 import { map } from 'rxjs/operators'
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from './../environments/environment';
 
 @Injectable({providedIn: 'root'})
 export class PostService{
@@ -12,7 +13,7 @@ export class PostService{
     private httpClient: HttpClient;
     //the nodeServerAddress is the IP address of the node server relative to the client. (using the docker name wont work because angular runs on the CLIENT)
     ///0.0.0.0 wont work on work computer if running node on linux academy because the server isnt at localhost
-    private nodeServerAddress: string = 'http://0.0.0.0:8081';
+    private nodeServerAddress: string = environment.nodeUrl;
 
     constructor( httpClient: HttpClient, private router: Router){
         this.httpClient = httpClient;
