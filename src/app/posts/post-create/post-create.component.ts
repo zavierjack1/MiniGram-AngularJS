@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Post } from '../post.model';
-import { NgForm, FormControl } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PostService } from '../post.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 
@@ -16,13 +16,29 @@ enum Mode {
 })
 
 export class PostCreateComponent implements OnInit{
-    constructor(public postService: PostService, public route: ActivatedRoute){}
-    public post: Post; //needs to be public so we can get it in the html
-    private mode; //create mode or edit mode
+    post: Post; //needs to be public so we can get it in the html
+    isLoading = false;
+    form: FormGroup;
     private postId: string; 
-    private isLoading = false;
+    private mode: Number; //create mode or edit mode
+
+    constructor(public postService: PostService, public route: ActivatedRoute){}
 
     ngOnInit(): void {
+        this.form = new FormGroup({
+            title: new FormControl(
+                null, 
+                {
+                    validators: [Validators.required, Validators.minLength(3)]
+                }, 
+            ), 
+            content: new FormControl(
+                null, 
+                {
+                    validators: [Validators.required]
+                }
+            )
+        });
         this.route.paramMap.subscribe((paramMap: ParamMap)=>{
             if (paramMap.has('postId')){
                 this.mode = Mode.EDIT;
@@ -35,6 +51,13 @@ export class PostCreateComponent implements OnInit{
                         content: postData.content
                     };
                     this.isLoading = false;
+
+                    this.form.setValue(
+                        {
+                            title: this.post.title,
+                            content: this.post.content
+                        }
+                    )
                 });
             }
             else{
@@ -44,25 +67,25 @@ export class PostCreateComponent implements OnInit{
         });
     }
 
-    onSavePost(form: NgForm){
-        if (form.invalid) return;
+    onSavePost(){
+        if (this.form.invalid) return;
         this.isLoading = true;//no need to set back to false because we're leaving page and when we come back we set back to false
         if (this.mode === Mode.CREATE) {
             const post: Post = {
                 id: null,
-                title: form.value.title,
-                content: form.value.content
+                title: this.form.value.title,
+                content: this.form.value.content
             }
             this.postService.addPost(post);
         }
         else if (this.mode === Mode.EDIT){
             this.postService.updatePost({
                 id: this.postId,
-                title: form.value.title,
-                content: form.value.content
+                title: this.form.value.title,
+                content: this.form.value.content
             });
         }
-        form.resetForm();
+        this.form.reset();
     }  
 
     getTitleError(){

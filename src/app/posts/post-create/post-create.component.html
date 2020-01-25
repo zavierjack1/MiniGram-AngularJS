@@ -1,19 +1,15 @@
 <!--ngModel is for two way binding and must be added to imports in app.module.ts-->
 <mat-card>
     <mat-spinner *ngIf="isLoading"></mat-spinner>
-    <form (submit)="onSavePost(postForm)" #postForm="ngForm" *ngIf="!isLoading">
+    <form [formGroup]="form" (submit)="onSavePost()" *ngIf="!isLoading">
         <mat-form-field>
             <input 
-            matInput 
-            type="text" 
-            name="title"
-            [ngModel]="post?.title" 
-            placeholder="Post Title"
-            required minlength="3"
-            #title="ngModel" 
-            ><!--#title creates a variable that accesses the model metadata for the form-->
-            <!--using ngForm.getControl('').invalid should work but required onInit-->
-            <mat-error *ngIf="title.invalid" ng-controller="post-create.component">{{ getTitleError() }}</mat-error>
+                matInput 
+                type="text" 
+                formControlName="title"
+                placeholder="Post Title"
+            >
+            <mat-error *ngIf="form.get('title').invalid" ng-controller="post-create.component">{{ getTitleError() }}</mat-error>
         </mat-form-field>
         <div>
             <button mat-stroked-button type="button" mat-button (click)="filePicker.click()">Pick Image</button>
@@ -21,16 +17,13 @@
         </div>
         <mat-form-field>
             <textarea 
-            matInput 
-            type="text" 
-            name="content"
-            [ngModel]="post?.content"
-            rows="3"
-            #content="ngModel"
-            placeholder="Post Content"
-            required
+                matInput 
+                type="text" 
+                formControlName="content"
+                rows="3"
+                placeholder="Post Content"
             ></textarea>
-            <mat-error *ngIf="content.invalid">This is an invalid message</mat-error>
+            <mat-error *ngIf="form.get('content').invalid">This is an invalid message</mat-error>
         </mat-form-field>
         <button 
             mat-raised-button 
