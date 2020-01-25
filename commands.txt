@@ -2,6 +2,7 @@ docker run -dit --name my_node -p 8080:8080 -v /Users/zavierjack/Documents/Node:
 npm init
 npm install uuid
 npm install -g @angular/cli
+npm install
 ng serve --host 0.0.0.0 --port (do this from the project folder)
 
 docker run --name my_postgres -e POSTGRES_PASSWORD=password -d --network my_local_network postgres 
