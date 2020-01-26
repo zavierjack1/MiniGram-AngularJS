@@ -3,7 +3,7 @@ import { Post } from '../post.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PostService } from '../post.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-
+import { mimeType } from './mime-type.validator'
 enum Mode {
     CREATE,
     EDIT
@@ -19,6 +19,7 @@ export class PostCreateComponent implements OnInit{
     post: Post; //needs to be public so we can get it in the html
     isLoading = false;
     form: FormGroup;
+    imagePreview: string;
     private postId: string; 
     private mode: Number; //create mode or edit mode
 
@@ -28,15 +29,16 @@ export class PostCreateComponent implements OnInit{
         this.form = new FormGroup({
             title: new FormControl(
                 null, 
-                {
-                    validators: [Validators.required, Validators.minLength(3)]
-                }, 
+                {validators: [Validators.required, Validators.minLength(3)]}, 
             ), 
             content: new FormControl(
                 null, 
-                {
-                    validators: [Validators.required]
-                }
+                {validators: [Validators.required]}
+            ),
+            image: new FormControl(
+                null, 
+                {validators: [Validators.required],
+                asyncValidators: [mimeType]}
             )
         });
         this.route.paramMap.subscribe((paramMap: ParamMap)=>{
@@ -88,8 +90,23 @@ export class PostCreateComponent implements OnInit{
         this.form.reset();
     }  
 
+    onImagePicked(event: Event){
+        const file = (event.target as HTMLInputElement).files[0];
+        this.form.patchValue({image: file});
+        this.form.get('image').updateValueAndValidity();
+        console.log(file);
+        console.log(this.form);
+        const reader = new FileReader();
+        reader.onload =() => {
+            this.imagePreview = reader.result as string;
+        };
+        reader.readAsDataURL(file);
+    }
+
     getTitleError(){
         return "You've entered a bad message";
     }
+
+    
 }
 
