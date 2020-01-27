@@ -3,7 +3,8 @@ import { Post } from '../post.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PostService } from '../post.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { mimeType } from './mime-type.validator'
+import { mimeType } from './mime-type.validator';
+
 enum Mode {
     CREATE,
     EDIT
@@ -50,14 +51,16 @@ export class PostCreateComponent implements OnInit{
                     this.post = {
                         id: postData._id,
                         title: postData.title,
-                        content: postData.content
+                        content: postData.content,
+                        imagePath: postData.imagePath
                     };
                     this.isLoading = false;
 
                     this.form.setValue(
                         {
                             title: this.post.title,
-                            content: this.post.content
+                            content: this.post.content,
+                            image: this.post.imagePath
                         }
                     )
                 });
@@ -73,19 +76,19 @@ export class PostCreateComponent implements OnInit{
         if (this.form.invalid) return;
         this.isLoading = true;//no need to set back to false because we're leaving page and when we come back we set back to false
         if (this.mode === Mode.CREATE) {
-            const post: Post = {
-                id: null,
-                title: this.form.value.title,
-                content: this.form.value.content
-            }
-            this.postService.addPost(post);
+            this.postService.addPost(
+                this.form.value.title, 
+                this.form.value.content, 
+                this.form.value.image
+            );
         }
         else if (this.mode === Mode.EDIT){
-            this.postService.updatePost({
-                id: this.postId,
-                title: this.form.value.title,
-                content: this.form.value.content
-            });
+            this.postService.updatePost(
+                this.postId,
+                this.form.value.title,
+                this.form.value.content,
+                this.form.value.image
+            );
         }
         this.form.reset();
     }  

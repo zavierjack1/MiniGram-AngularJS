@@ -26,7 +26,8 @@ export class PostService{
                     return {
                         id: post._id,
                         title: post.title,
-                        content: post.content
+                        content: post.content,
+                        imagePath: post.imagePath
                     };
                 })
             }))
@@ -37,20 +38,33 @@ export class PostService{
     }
 
     getPost(id: string){
-        return this.httpClient.get<{_id: string, title: string, content: string}>(this.nodeServerAddress+'/api/posts/'+id);
+        return this.httpClient.get<{_id: string, title: string, content: string, imagePath: string}>(
+            this.nodeServerAddress+'/api/posts/'+id
+        );
     }
 
     getPostUpdatedListener(){
         return this.postUpdated.asObservable();
     }
 
-    addPost(post: Post){
+    addPost(title: string, content: string, image: File){
+        const postData = new FormData();
+        postData.append('title', title);
+        postData.append('content', content);
+        postData.append('image', image, title);
         //remember this Express server happens to live at 0.0.0.0 we'll want to 
         //pass in a env variable at run time with the public IP of the Express server
-        this.httpClient.post<{message:string, postId:string}>(this.nodeServerAddress+'/api/posts', post)
+        this.httpClient.post<{message:string, post: Post}>(
+            this.nodeServerAddress+'/api/posts', 
+            postData
+        )
         .subscribe((responseData) =>{
-            console.log(responseData.message);
-            post.id = responseData.postId;
+            const post: Post = {
+                id: responseData.post.id,
+                title: title,
+                content: content,
+                imagePath: responseData.post.imagePath
+            }
             this.posts.push(post);
             this.postUpdated.next([...this.posts]);
             this.router.navigate(['/']);
@@ -60,16 +74,29 @@ export class PostService{
     deletePost(postId: string){
         this.httpClient.delete<{message: string}>(this.nodeServerAddress+'/api/posts/'+postId)
         .subscribe((responseData) => {
-            console.log(responseData.message);
             this.posts = this.posts.filter(post => post.id !== postId);
             this.postUpdated.next([...this.posts]);
         });
     }
 
-    updatePost(post: Post){
-        this.httpClient.put<{message: string}>(this.nodeServerAddress+'/api/posts/'+post.id, post)
+    updatePost(id: string, title: string, content: string, image: File | string){
+        let postData: FormData | Post;
+        //file case
+        if (typeof(image) === 'object'){
+            postData = new FormData();
+            postData.append('id', id);
+            postData.append('title', title);
+            postData.append('content', content);
+            postData.append('image', image, title);
+        }
+        else{
+            postData = { id: id, title: title, content: content, imagePath: image};
+        }
+        this.httpClient.put<{message: string, post: Post}>(this.nodeServerAddress+'/api/posts/'+id, postData)
             .subscribe((responseData) => {
-                console.log(responseData.message);
+                const post: Post = { id: id, title: title, content: content, 
+                    imagePath: responseData.post.imagePath
+                };
                 const updatedIndex = this.posts.findIndex(p => p.id === post.id);
                 this.posts[updatedIndex] = post;
                 this.postUpdated.next([...this.posts]);
