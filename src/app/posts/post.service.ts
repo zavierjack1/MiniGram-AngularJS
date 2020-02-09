@@ -9,7 +9,7 @@ import { environment } from './../environments/environment';
 @Injectable({providedIn: 'root'})
 export class PostService{
     private posts: Post[]= [];
-    private postUpdated = new Subject<Post[]>();
+    private postUpdated = new Subject<{posts: Post[], postCount: number}>();
     private httpClient: HttpClient;
     //the nodeServerAddress is the IP address of the node server relative to the client. (using the docker name wont work because angular runs on the CLIENT)
     ///0.0.0.0 wont work on work computer if running node on linux academy because the server isnt at localhost
@@ -19,21 +19,27 @@ export class PostService{
         this.httpClient = httpClient;
     }
 
-    getPosts(){
-        this.httpClient.get<{message: string, posts: any}>(this.nodeServerAddress+'/api/posts')
-            .pipe(map((postData) => {
-                return postData.posts.map(post => {
+    getPosts(postsPerPage: number, currentPage: number){
+        const queryParams = `?pagesize=${postsPerPage}&page=${currentPage}`;
+        this.httpClient.get<{message: string, posts: any, postCount: number}>(this.nodeServerAddress+'/api/posts'+queryParams)
+            .pipe(
+                map((postData) => {
                     return {
-                        id: post._id,
-                        title: post.title,
-                        content: post.content,
-                        imagePath: post.imagePath
+                        posts: postData.posts.map(post => {
+                            return {
+                                id: post._id,
+                                title: post.title,
+                                content: post.content,
+                                imagePath: post.imagePath
+                            };
+                        }),
+                        postCount: postData.postCount
                     };
                 })
-            }))
+            )
             .subscribe((transformedPosts)=>{
-                this.posts = transformedPosts;
-                this.postUpdated.next([...this.posts]);
+                this.posts = transformedPosts.posts;
+                this.postUpdated.next({posts: [...this.posts], postCount: transformedPosts.postCount});
             });
     }
 
@@ -59,24 +65,12 @@ export class PostService{
             postData
         )
         .subscribe((responseData) =>{
-            const post: Post = {
-                id: responseData.post.id,
-                title: title,
-                content: content,
-                imagePath: responseData.post.imagePath
-            }
-            this.posts.push(post);
-            this.postUpdated.next([...this.posts]);
             this.router.navigate(['/']);
         });
     }
 
     deletePost(postId: string){
-        this.httpClient.delete<{message: string}>(this.nodeServerAddress+'/api/posts/'+postId)
-        .subscribe((responseData) => {
-            this.posts = this.posts.filter(post => post.id !== postId);
-            this.postUpdated.next([...this.posts]);
-        });
+        return this.httpClient.delete<{message: string}>(this.nodeServerAddress+'/api/posts/'+postId);
     }
 
     updatePost(id: string, title: string, content: string, image: File | string){
@@ -94,12 +88,6 @@ export class PostService{
         }
         this.httpClient.put<{message: string, post: Post}>(this.nodeServerAddress+'/api/posts/'+id, postData)
             .subscribe((responseData) => {
-                const post: Post = { id: id, title: title, content: content, 
-                    imagePath: responseData.post.imagePath
-                };
-                const updatedIndex = this.posts.findIndex(p => p.id === post.id);
-                this.posts[updatedIndex] = post;
-                this.postUpdated.next([...this.posts]);
                 this.router.navigate(['/']);
             });        
     }

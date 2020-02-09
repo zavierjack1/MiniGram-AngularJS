@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Post } from '../post.model';
 import { PostService } from '../post.service';
 import { Subscription } from 'rxjs';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
     selector: 'app-post-list',
@@ -9,7 +10,12 @@ import { Subscription } from 'rxjs';
     styleUrls: ['/post-list.component.css']
 })
 export class PostListComponent implements OnInit, OnDestroy{
+    totalPosts = 0;
+    postsPerPage = 2;
+    pageSizeOptions = [1,2,5,10];
+    currentPage = 1;
     postService: PostService;
+    posts: Post[] = [];
     private postsSubscription: Subscription;
     private isLoading = false;
 
@@ -17,14 +23,21 @@ export class PostListComponent implements OnInit, OnDestroy{
         this.postService = postService;
     }
 
-    posts: Post[] = []; //input means it can bind to variables from the parent component
-
+    onChangedPage(pageData: PageEvent){
+        this.isLoading = true;
+        this.currentPage = pageData.pageIndex + 1; //keep in mind, pageIndex starts at 0 so we add 1
+        this.postsPerPage = pageData.pageSize;
+        this.postService.getPosts(this.postsPerPage, this.currentPage);
+    }
     ngOnInit(): void {
         this.isLoading = true;
-        this.postService.getPosts();
+        this.postService.getPosts(this.postsPerPage, this.currentPage);
         this.postsSubscription = this.postService.getPostUpdatedListener()
-            .subscribe((posts: Post[]) =>{
-                this.posts = posts;
+            .subscribe((postData: {posts: Post[], postCount: number}) =>{
+                console.log("here");
+                console.log("postCount: "+postData.postCount);
+                this.posts = postData.posts;
+                this.totalPosts = postData.postCount;
                 this.isLoading = false;
             }) ;
     }
@@ -34,6 +47,9 @@ export class PostListComponent implements OnInit, OnDestroy{
     }
 
     onDelete(postId: string){ 
-        this.postService.deletePost(postId);
+        this.isLoading = true;
+        this.postService.deletePost(postId).subscribe(() => {
+            this.postService.getPosts(this.postsPerPage, this.currentPage);
+        });
     }
 }

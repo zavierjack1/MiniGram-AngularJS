@@ -11,6 +11,10 @@ mat-spinner{
     margin: auto;
 }
 
+mat-paginator{
+    margin: 1rem;
+}
+
 .post-image {
     width: 100%;
 }
@@ -19,4 +23,5 @@ mat-spinner{
     width: 100%;
     box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
     object-fit: contain;
+    height: 500px;
 }
