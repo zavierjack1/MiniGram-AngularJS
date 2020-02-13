@@ -1,7 +1,7 @@
 <!--ngModel is for two way binding and must be added to imports in app.module.ts-->
 <mat-card>
     <mat-spinner *ngIf="isLoading"></mat-spinner>
-    <form (submit)="onSignUp(signupForm)" #signupForm="ngForm" *ngIf="!isLoading">
+    <form (submit)="onSignup(signupForm)" #signupForm="ngForm" *ngIf="!isLoading">
         <mat-form-field>
             <input 
                 matInput 
