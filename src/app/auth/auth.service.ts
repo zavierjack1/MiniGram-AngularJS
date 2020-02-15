@@ -14,6 +14,7 @@ similarly, you couldve added this calss to the Providers array in app.module.ts 
 })
 export class AuthService{
     private token: string;
+    private tokenTimer: NodeJS.Timer;
     private isAuthenticated:boolean = false;
     private authStatusListener = new Subject<boolean>();
     private nodeServerAddress: string = environment.nodeUrl;
@@ -46,6 +47,11 @@ export class AuthService{
             .subscribe(response => {
                 if(response.token){
                     this.token = response.token;
+                    //timeout defaults to ms
+                    this.tokenTimer = setTimeout(() => {
+                        this.logout()
+                    }, response.expiresIn*1000);
+                    console.log(this.expiresInDuration );
                     this.isAuthenticated = true;
                     this.authStatusListener.next(true);
                     this.router.navigate(['/']);
@@ -55,6 +61,7 @@ export class AuthService{
 
     logout(){
         this.token = null;
+        clearTimeout(this.tokenTimer); 
         this.isAuthenticated = false;
         this.authStatusListener.next(false);
         this.router.navigate(['/']);
