@@ -13,11 +13,10 @@ export class LoginComponent{
     constructor(public authService: AuthService){};
 
     onLogin(form: NgForm){
-        console.log(form.value);
         if(form.invalid){
             return;
         }
-
+        this.isLoading = true;
         this.authService.login(form.value.email, form.value.password);
     }
 }

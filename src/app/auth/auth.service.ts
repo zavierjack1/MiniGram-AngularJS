@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { AuthData } from './auth-data.model';
 import { Subject } from "rxjs"
+import { Router } from '@angular/router';
 
 /*
 injectable providedIn: root tells Angular where this service is and only creates one instance of it.
@@ -17,7 +18,7 @@ export class AuthService{
     private authStatusListener = new Subject<boolean>();
     private nodeServerAddress: string = environment.nodeUrl;
     
-    constructor(private httpClient: HttpClient){}
+    constructor(private httpClient: HttpClient, private router: Router){}
 
     getToken(){
         return this.token;
@@ -47,13 +48,15 @@ export class AuthService{
                     this.token = response.token;
                     this.isAuthenticated = true;
                     this.authStatusListener.next(true);
+                    this.router.navigate(['/']);
                 }
-            })
+            });
     }
 
     logout(){
         this.token = null;
         this.isAuthenticated = false;
         this.authStatusListener.next(false);
+        this.router.navigate(['/']);
     }
 }
