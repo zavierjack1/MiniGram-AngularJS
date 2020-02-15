@@ -7,9 +7,14 @@ import { AuthData } from './auth-data.model';
     providedIn: "root"
 })
 export class AuthService{
+    private token: string;
     private nodeServerAddress: string = environment.nodeUrl;
     
     constructor(private httpClient: HttpClient){}
+
+    getToken(){
+        return this.token;
+    }
 
     createUser(email: string, password: string){
         const authData: AuthData = {email: email, password: password};
@@ -21,9 +26,9 @@ export class AuthService{
 
     login(email: string, password: string){
         const authData: AuthData = {email: email, password: password}
-        this.httpClient.post(this.nodeServerAddress+'/api/user/login', authData)
+        this.httpClient.post<{token: string}>(this.nodeServerAddress+'/api/user/login', authData)
             .subscribe(response => {
-                console.log(response);
+                this.token = response.token;
             })
     }
 }
