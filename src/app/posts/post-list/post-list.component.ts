@@ -3,6 +3,7 @@ import { Post } from '../post.model';
 import { PostService } from '../post.service';
 import { Subscription } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
     selector: 'app-post-list',
@@ -14,14 +15,13 @@ export class PostListComponent implements OnInit, OnDestroy{
     postsPerPage = 2;
     pageSizeOptions = [1,2,5,10];
     currentPage = 1;
-    postService: PostService;
     posts: Post[] = [];
-    private postsSubscription: Subscription;
+    public userIsAuthenticated = false;
+    private authStatusSub: Subscription;
+    private postsSub: Subscription;
     private isLoading = false;
 
-    constructor(postService: PostService){
-        this.postService = postService;
-    }
+    constructor(public postService: PostService, private authService:AuthService){}
 
     onChangedPage(pageData: PageEvent){
         this.isLoading = true;
@@ -32,16 +32,25 @@ export class PostListComponent implements OnInit, OnDestroy{
     ngOnInit(): void {
         this.isLoading = true;
         this.postService.getPosts(this.postsPerPage, this.currentPage);
-        this.postsSubscription = this.postService.getPostUpdatedListener()
+        this.postsSub = this.postService.getPostUpdatedListener()
             .subscribe((postData: {posts: Post[], postCount: number}) =>{
                 this.posts = postData.posts;
                 this.totalPosts = postData.postCount;
                 this.isLoading = false;
-            }) ;
+            });
+        this.userIsAuthenticated = this.authService.getIsAuthenticated();
+
+        //setups us subscription
+        this.authStatusSub = this.authService
+            .getAuthStatusListener()
+            .subscribe(isAuthenticated => {
+                this.userIsAuthenticated = isAuthenticated;
+            });
     }
 
     ngOnDestroy(): void {
-        this.postsSubscription.unsubscribe();
+        this.postsSub.unsubscribe();
+        this.authStatusSub.unsubscribe();
     }
 
     onDelete(postId: string){ 

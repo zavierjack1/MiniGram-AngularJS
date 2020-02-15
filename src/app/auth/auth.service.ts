@@ -13,6 +13,7 @@ similarly, you couldve added this calss to the Providers array in app.module.ts 
 })
 export class AuthService{
     private token: string;
+    private isAuthenticated:boolean = false;
     private authStatusListener = new Subject<boolean>();
     private nodeServerAddress: string = environment.nodeUrl;
     
@@ -24,6 +25,10 @@ export class AuthService{
 
     getAuthStatusListener(){
         return this.authStatusListener.asObservable();
+    }
+
+    getIsAuthenticated(){
+        return this.isAuthenticated;
     }
 
     createUser(email: string, password: string){
@@ -38,8 +43,11 @@ export class AuthService{
         const authData: AuthData = {email: email, password: password}
         this.httpClient.post<{token: string}>(this.nodeServerAddress+'/api/user/login', authData)
             .subscribe(response => {
-                this.token = response.token;
-                this.authStatusListener.next(true);
+                if(response.token){
+                    this.token = response.token;
+                    this.isAuthenticated = true;
+                    this.authStatusListener.next(true);
+                }
             })
     }
 }
