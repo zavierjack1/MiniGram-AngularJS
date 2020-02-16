@@ -22,6 +22,7 @@ export class PostService{
     getPosts(postsPerPage: number, currentPage: number){
         const queryParams = `?pagesize=${postsPerPage}&page=${currentPage}`;
         this.httpClient.get<{message: string, posts: any, postCount: number}>(this.nodeServerAddress+'/api/posts'+queryParams)
+            //we get _id but we expect id so we do this extra transformation
             .pipe(
                 map((postData) => {
                     return {
@@ -30,7 +31,8 @@ export class PostService{
                                 id: post._id,
                                 title: post.title,
                                 content: post.content,
-                                imagePath: post.imagePath
+                                imagePath: post.imagePath,
+                                createdBy: post.createdBy
                             };
                         }),
                         postCount: postData.postCount
