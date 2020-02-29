@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Post } from '../post.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PostService } from '../post.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { mimeType } from './mime-type.validator';
+import { AuthService } from 'src/app/auth/auth.service';
+import { Subscription } from 'rxjs';
 
 enum Mode {
     CREATE,
@@ -16,17 +18,27 @@ enum Mode {
     styleUrls: ['./post-create.component.css']
 })
 
-export class PostCreateComponent implements OnInit{
+export class PostCreateComponent implements OnInit, OnDestroy{
     post: Post; //needs to be public so we can get it in the html
     isLoading = false;
     form: FormGroup;
     imagePreview: string;
     private postId: string; 
     private mode: Number; //create mode or edit mode
+    private authStatusSub: Subscription;
 
-    constructor(public postService: PostService, public route: ActivatedRoute){}
+    constructor(
+        public postService: PostService, 
+        public route: ActivatedRoute,
+        private authService: AuthService
+    ){}
 
     ngOnInit(): void {
+        this.authStatusSub = this.authService.getAuthStatusListener().subscribe(
+            authStatus => {
+                this.isLoading = false;
+            }
+        );
         this.form = new FormGroup({
             title: new FormControl(
                 null, 
@@ -111,6 +123,8 @@ export class PostCreateComponent implements OnInit{
         return "You've entered a bad message";
     }
 
-    
+    ngOnDestroy(): void {
+        this.authStatusSub.unsubscribe();
+    }
 }
 
