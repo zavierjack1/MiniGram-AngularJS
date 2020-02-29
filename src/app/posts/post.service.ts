@@ -88,7 +88,7 @@ export class PostService{
         }
         else{
             //we handle the createdBy on the backend
-            postData = { id: id, title: title, content: content, imagePath: image, createdBy: null};
+            postData = { id: id, title: title, content: content, imagePath: image, createdBy: null, createdByEmail: null};
         }
         this.httpClient.put<{message: string, post: Post}>(this.nodeServerAddress+'/api/posts/'+id, postData)
             .subscribe((responseData) => {
