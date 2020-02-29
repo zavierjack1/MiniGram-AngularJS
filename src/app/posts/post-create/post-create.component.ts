@@ -65,7 +65,8 @@ export class PostCreateComponent implements OnInit, OnDestroy{
                         title: postData.title,
                         content: postData.content,
                         imagePath: postData.imagePath, 
-                        createdBy: postData.createdBy
+                        createdBy: postData.createdBy,
+                        createdByEmail: postData.createdByEmail
                     };
                     this.isLoading = false;
 
@@ -110,8 +111,6 @@ export class PostCreateComponent implements OnInit, OnDestroy{
         const file = (event.target as HTMLInputElement).files[0];
         this.form.patchValue({image: file});
         this.form.get('image').updateValueAndValidity();
-        console.log(file);
-        console.log(this.form);
         const reader = new FileReader();
         reader.onload =() => {
             this.imagePreview = reader.result as string;

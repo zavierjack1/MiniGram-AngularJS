@@ -3,5 +3,6 @@ export interface Post{
     title: string;
     content: string;
     imagePath: string;
-    createdBy: string;
+    createdBy: string; //created by mongo ID
+    createdByEmail: string;
 }

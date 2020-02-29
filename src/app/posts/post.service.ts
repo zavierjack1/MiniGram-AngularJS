@@ -32,7 +32,8 @@ export class PostService{
                                 title: post.title,
                                 content: post.content,
                                 imagePath: post.imagePath,
-                                createdBy: post.createdBy
+                                createdBy: post.createdBy, 
+                                createdByEmail: post.createdByEmail
                             };
                         }),
                         postCount: postData.postCount
@@ -46,7 +47,7 @@ export class PostService{
     }
 
     getPost(id: string){
-        return this.httpClient.get<{_id: string, title: string, content: string, imagePath: string, createdBy: string}>(
+        return this.httpClient.get<{_id: string, title: string, content: string, imagePath: string, createdBy: string, createdByEmail: string}>(
             this.nodeServerAddress+'/api/posts/'+id
         );
     }
