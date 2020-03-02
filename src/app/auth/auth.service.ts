@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 
 /*
 injectable providedIn: root tells Angular where this service is and only creates one instance of it.
-similarly, you couldve added this calss to the Providers array in app.module.ts and gotten the same effect.
+similarly, you couldve added this class to the Providers array in app.module.ts and gotten the same effect.
 */
 @Injectable({
     providedIn: "root"
@@ -18,7 +18,7 @@ export class AuthService{
     private userId: string;
     private isAuthenticated:boolean = false;
     private authStatusListener = new Subject<boolean>();
-    private nodeServerAddress: string = environment.nodeUrl;
+    private USER_URL: string = environment.nodeUrl+'/api/user/';
     
     constructor(private httpClient: HttpClient, private router: Router){}
 
@@ -40,7 +40,7 @@ export class AuthService{
 
     createUser(email: string, password: string){
         const authData: AuthData = {email: email, password: password};
-        this.httpClient.post(this.nodeServerAddress+'/api/user/signup', authData).subscribe(
+        this.httpClient.post(this.USER_URL+'signup', authData).subscribe(
             response =>{
                 this.login(email, password);
             },
@@ -52,7 +52,7 @@ export class AuthService{
 
     login(email: string, password: string){
         const authData: AuthData = {email: email, password: password}
-        this.httpClient.post<{token: string, expiresIn: number, userId: string}>(this.nodeServerAddress+'/api/user/login', authData)
+        this.httpClient.post<{token: string, expiresIn: number, userId: string}>(this.USER_URL+'login', authData)
             .subscribe(
                 response => {
                     if(response.token && response.expiresIn){

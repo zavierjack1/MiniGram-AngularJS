@@ -11,9 +11,7 @@ export class PostService{
     private posts: Post[]= [];
     private postUpdated = new Subject<{posts: Post[], postCount: number}>();
     private httpClient: HttpClient;
-    //the nodeServerAddress is the IP address of the node server relative to the client. (using the docker name wont work because angular runs on the CLIENT)
-    ///0.0.0.0 wont work on work computer if running node on linux academy because the server isnt at localhost
-    private nodeServerAddress: string = environment.nodeUrl;
+    private POSTS_URL: string = environment.nodeUrl+'/api/posts/';
 
     constructor( httpClient: HttpClient, private router: Router){
         this.httpClient = httpClient;
@@ -21,7 +19,7 @@ export class PostService{
 
     getPosts(postsPerPage: number, currentPage: number){
         const queryParams = `?pagesize=${postsPerPage}&page=${currentPage}`;
-        this.httpClient.get<{message: string, posts: any, postCount: number}>(this.nodeServerAddress+'/api/posts'+queryParams)
+        this.httpClient.get<{message: string, posts: any, postCount: number}>(this.POSTS_URL+queryParams)
             //we get _id but we expect id so we do this extra transformation
             .pipe(
                 map((postData) => {
@@ -48,7 +46,7 @@ export class PostService{
 
     getPost(id: string){
         return this.httpClient.get<{_id: string, title: string, content: string, imagePath: string, createdBy: string, createdByEmail: string}>(
-            this.nodeServerAddress+'/api/posts/'+id
+            this.POSTS_URL+id
         );
     }
 
@@ -64,7 +62,7 @@ export class PostService{
         //remember this Express server happens to live at 0.0.0.0 we'll want to 
         //pass in a env variable at run time with the public IP of the Express server
         this.httpClient.post<{message:string, post: Post}>(
-            this.nodeServerAddress+'/api/posts', 
+            this.POSTS_URL, 
             postData
         )
         .subscribe((responseData) =>{
@@ -73,7 +71,7 @@ export class PostService{
     }
 
     deletePost(postId: string){
-        return this.httpClient.delete<{message: string}>(this.nodeServerAddress+'/api/posts/'+postId);
+        return this.httpClient.delete<{message: string}>(this.POSTS_URL+postId);
     }
 
     updatePost(id: string, title: string, content: string, image: File | string){
@@ -90,7 +88,7 @@ export class PostService{
             //we handle the createdBy on the backend
             postData = { id: id, title: title, content: content, imagePath: image, createdBy: null, createdByEmail: null};
         }
-        this.httpClient.put<{message: string, post: Post}>(this.nodeServerAddress+'/api/posts/'+id, postData)
+        this.httpClient.put<{message: string, post: Post}>(this.POSTS_URL+id, postData)
             .subscribe((responseData) => {
                 this.router.navigate(['/']);
             });        

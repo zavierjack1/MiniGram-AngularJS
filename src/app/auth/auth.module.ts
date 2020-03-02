@@ -5,6 +5,7 @@ import { AngularMaterialModule } from '../angular-material.module';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AuthRoutingModule } from './auth-routing.module';
 
 @NgModule({
     declarations: [
@@ -15,7 +16,8 @@ import { FormsModule } from '@angular/forms';
         CommonModule, //adds common functionality like ngIf
         AngularMaterialModule,
         RouterModule, 
-        FormsModule
+        FormsModule, 
+        AuthRoutingModule
     ]
 }) 
 export class AuthModule{ }
