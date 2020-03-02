@@ -17,7 +17,6 @@ enum Mode {
     templateUrl: './post-create.component.html',
     styleUrls: ['./post-create.component.css']
 })
-
 export class PostCreateComponent implements OnInit, OnDestroy{
     post: Post; //needs to be public so we can get it in the html
     isLoading = false;

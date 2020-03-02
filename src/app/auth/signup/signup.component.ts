@@ -7,7 +7,6 @@ import { Subscription } from 'rxjs';
     templateUrl: "/signup.component.html",
     styleUrls: ["/signup.component.css"]
 })
-
 export class SignupComponent implements OnInit, OnDestroy{
     isLoading = false;
     private authStatusSubscription: Subscription;
