@@ -58,6 +58,22 @@
                   "maximumError": "10kb"
                 }
               ]
+            },
+            "local":{
+              "fileReplacements": [
+                {
+                  "replace": "src/app/environments/environment.ts",
+                  "with": "src/app/environments/environment.local.ts"
+                }
+              ]
+            },
+            "test": {
+              "fileReplacements": [
+                {
+                  "replace": "src/app/environments/environment.ts",
+                  "with": "src/app/environments/environment.test.ts"
+                }
+              ]
             }
           }
         },
@@ -69,6 +85,12 @@
           "configurations": {
             "production": {
               "browserTarget": "mean-course:build:production"
+            },
+            "local":{
+              "browserTarget": "mean-course:build:local"
+            },
+            "test":{
+              "browserTarget": "mean-course:build:test"
             }
           }
         },
@@ -118,6 +140,12 @@
           "configurations": {
             "production": {
               "devServerTarget": "mean-course:serve:production"
+            },
+            "local": {
+              "devServerTarget": "mean-course:serve"
+            },
+            "test": {
+              "devServerTarget": "mean-course:serve"
             }
           }
         }

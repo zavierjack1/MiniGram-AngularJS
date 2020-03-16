@@ -13,5 +13,16 @@ npm install --save @angular/material
 ng add @angular/material #this is an angular CLI command
 
 docker run -dit --name my_angular -p 8080:8080 -v $(pwd)/AngularApp:/AngularApp zavierjack1/node_w_angular:latest
+ --network my_local_network
+docker run -dit --name my_angular1 -p 8091:8080 zavierjack1/mean_course_angular:latest
 
-docker run -dit --network my_local_network --name my_angular -p 8080:8080 zavierjack1/mean_course_angular:latest
+docker run -dit --name my_angular3 -p 8092:8080 zavierjack1/mean_course_angular:latest -c "ng server --host 0.0.0.0 --port 8080 -c local"
+
+
+ng serve --host 0.0.0.0 --port 8080 -c local
+
+docker run -dit --name my_angular3 -p 8092:8080 --entrypoint "/bin/bash" zavierjack1/mean_course_angular:latest
+
+
+
+docker run -dit --name my_angular3 -p 8092:8080 --entrypoint /bin/bash zavierjack1/mean_course_angular:latest -c "ng serve --host 0.0.0.0 --port 8080 -c test"

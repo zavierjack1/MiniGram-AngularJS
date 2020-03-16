@@ -12,7 +12,7 @@ export class PostService{
     private postUpdated = new Subject<{posts: Post[], postCount: number}>();
     private httpClient: HttpClient;
     private POSTS_URL: string = environment.nodeUrl+'/api/posts/';
-
+    
     constructor( httpClient: HttpClient, private router: Router){
         this.httpClient = httpClient;
     }
