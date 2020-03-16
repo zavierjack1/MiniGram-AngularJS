@@ -24,5 +24,3 @@ ng serve --host 0.0.0.0 --port 8080 -c local
 docker run -dit --name my_angular3 -p 8092:8080 --entrypoint "/bin/bash" zavierjack1/mean_course_angular:latest
 
 
-
-docker run -dit --name my_angular3 -p 8092:8080 --entrypoint /bin/bash zavierjack1/mean_course_angular:latest -c "ng serve --host 0.0.0.0 --port 8080 -c test"
