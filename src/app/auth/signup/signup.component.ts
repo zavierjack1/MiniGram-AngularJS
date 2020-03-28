@@ -4,8 +4,8 @@ import { AuthService } from '../auth.service';
 import { Subscription } from 'rxjs';
 
 @Component({
-    templateUrl: "/signup.component.html",
-    styleUrls: ["/signup.component.css"]
+    templateUrl: "./signup.component.html",
+    styleUrls: ["./signup.component.css"]
 })
 export class SignupComponent implements OnInit, OnDestroy{
     isLoading = false;

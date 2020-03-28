@@ -26,10 +26,20 @@ zavierjack1/mean_course_angular:latest \
 docker run -dit \
 --name my_angular \
 -p 8080:8080 \
--v $(pwd)/environment.dynamic.ts:/AngularApp/src/app/environments/environment.dynamic.ts \
+-v $(pwd)/Mean-Course-FullStack/Angular/environment.dynamic.ts:/AngularApp/src/app/environments/environment.dynamic.ts \
+-v $(pwd)/AngularApp:/AngularApp \
 zavierjack1/mean_course_angular:latest \
 /bin/bash -c "ng serve --host 0.0.0.0 --port 8080 -c dynamic"
 
+
+my_angular:
+    image: zavierjack1/mean_course_angular:latest
+    ports:
+      - "8085:8080"
+    command: ng serve --host 0.0.0.0 --port 8080 --configuration dynamic
+    volumes: 
+      - ../AngularApp:/AngularApp
+      - ./Angular/environment.dynamic.ts:/AngularApp/src/app/environments/environment.dynamic.ts
 
 ng serve --host 0.0.0.0 --port 8080 -c local
 
