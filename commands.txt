@@ -16,11 +16,25 @@ docker run -dit --name my_angular -p 8080:8080 -v $(pwd)/AngularApp:/AngularApp 
  --network my_local_network
 docker run -dit --name my_angular1 -p 8091:8080 zavierjack1/mean_course_angular:latest
 
-docker run -dit --name my_angular3 -p 8092:8080 zavierjack1/mean_course_angular:latest -c "ng server --host 0.0.0.0 --port 8080 -c local"
+docker run -dit \
+--name my_angular \
+-p 8080:8080 \
+-v $(pwd)/environment.dynamic.ts:/AngularApp/src/app/environments/environment.dynamic.ts \
+zavierjack1/mean_course_angular:latest \
+-c "ng serve --host 0.0.0.0 --port 8080 -c dynamic" 
+
+docker run -dit \
+--name my_angular \
+-p 8080:8080 \
+-v $(pwd)/environment.dynamic.ts:/AngularApp/src/app/environments/environment.dynamic.ts \
+zavierjack1/mean_course_angular:latest \
+/bin/bash -c "ng serve --host 0.0.0.0 --port 8080 -c dynamic"
 
 
 ng serve --host 0.0.0.0 --port 8080 -c local
 
-docker run -dit --name my_angular3 -p 8092:8080 --entrypoint "/bin/bash" zavierjack1/mean_course_angular:latest
+docker run -dit --name my_angular -p 8080:8080 -v $(pwd)/AngularApp:/AngularApp zavierjack1/node_w_angular:latest
+
+docker run -dit --name my_angular3 -p 8092:8080 --entrypoint "/bin/bash" -v $(pwd)/environment.dynamic.ts:/AngularApp/src/app/environments/environment.dynamic.ts zavierjack1/mean_course_angular:latest
 
 

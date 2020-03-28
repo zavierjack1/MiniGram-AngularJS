@@ -67,11 +67,11 @@
                 }
               ]
             },
-            "test": {
+            "dynamic": {
               "fileReplacements": [
                 {
                   "replace": "src/app/environments/environment.ts",
-                  "with": "src/app/environments/environment.test.ts"
+                  "with": "src/app/environments/environment.dynamic.ts"
                 }
               ]
             }
@@ -89,8 +89,8 @@
             "local":{
               "browserTarget": "mean-course:build:local"
             },
-            "test":{
-              "browserTarget": "mean-course:build:test"
+            "dynamic":{
+              "browserTarget": "mean-course:build:dynamic"
             }
           }
         },
@@ -144,7 +144,7 @@
             "local": {
               "devServerTarget": "mean-course:serve"
             },
-            "test": {
+            "dynamic": {
               "devServerTarget": "mean-course:serve"
             }
           }
