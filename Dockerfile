@@ -5,4 +5,5 @@ COPY . /AngularApp
 WORKDIR /AngularApp
 RUN npm install -g @angular/cli
 RUN npm install
+RUN ng build --prod --aot --buildOptimizer
 CMD ng serve --host 0.0.0.0 --port 8080
