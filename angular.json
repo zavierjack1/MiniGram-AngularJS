@@ -59,19 +59,11 @@
                 }
               ]
             },
-            "local":{
+            "development": {
               "fileReplacements": [
                 {
                   "replace": "src/app/environments/environment.ts",
-                  "with": "src/app/environments/environment.local.ts"
-                }
-              ]
-            },
-            "dynamic": {
-              "fileReplacements": [
-                {
-                  "replace": "src/app/environments/environment.ts",
-                  "with": "src/app/environments/environment.dynamic.ts"
+                  "with": "src/app/environments/environment.development.ts"
                 }
               ]
             }
@@ -86,11 +78,8 @@
             "production": {
               "browserTarget": "mean-course:build:production"
             },
-            "local":{
-              "browserTarget": "mean-course:build:local"
-            },
-            "dynamic":{
-              "browserTarget": "mean-course:build:dynamic"
+            "development":{
+              "browserTarget": "mean-course:build:development"
             }
           }
         },
@@ -141,10 +130,7 @@
             "production": {
               "devServerTarget": "mean-course:serve:production"
             },
-            "local": {
-              "devServerTarget": "mean-course:serve"
-            },
-            "dynamic": {
+            "development": {
               "devServerTarget": "mean-course:serve"
             }
           }
