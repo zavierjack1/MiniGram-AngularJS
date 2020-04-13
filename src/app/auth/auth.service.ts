@@ -15,8 +15,8 @@ similarly, you couldve added this class to the Providers array in app.module.ts 
 export class AuthService{
     private token: string;
     private tokenTimer: any;
-    private userId: string;
-    private isAuthenticated:boolean = false;
+    private userData: {userId: string, admin: boolean}; 
+    private isAuthenticated: boolean = false;
     private authStatusListener = new Subject<boolean>();
     private USER_URL: string = environment.nodeUrl+'/api/user/';
     
@@ -35,7 +35,11 @@ export class AuthService{
     }
 
     getUserId(){
-        return this.userId;
+        return (this.userData) ? this.userData.userId : null;
+    }
+
+    getUserData(){
+        return this.userData;
     }
 
     createUser(email: string, password: string){
@@ -52,15 +56,15 @@ export class AuthService{
 
     login(email: string, password: string){
         const authData: AuthData = {email: email, password: password}
-        this.httpClient.post<{token: string, expiresIn: number, userId: string}>(this.USER_URL+'login', authData)
+        this.httpClient.post<{token: string, expiresIn: number, userData: {userId: string, email: string, admin: boolean}}>(this.USER_URL+'login', authData)
             .subscribe(
                 response => {
                     if(response.token && response.expiresIn){
                         this.token = response.token;
-                        this.userId = response.userId;
+                        this.userData = response.userData;
                         this.setAuthTime(response.expiresIn*1000);//in milliseconds
-                        const expirationDate  = new Date(new Date().getTime()+response.expiresIn*1000);
-                        this.saveAuthData(this.token, expirationDate, this.userId);
+                        const expirationDate = new Date(new Date().getTime()+response.expiresIn*1000);
+                        this.saveAuthData(this.token, expirationDate, this.getUserId());
                         this.isAuthenticated = true;
                         this.authStatusListener.next(true);
                         this.router.navigate(['/']);
@@ -76,7 +80,7 @@ export class AuthService{
         this.token = null;
         clearTimeout(this.tokenTimer); 
         this.clearAuthData();
-        this.userId = null;
+        this.userData = null;
         this.isAuthenticated = false;
         this.authStatusListener.next(false);
         this.router.navigate(['/']);
@@ -91,11 +95,22 @@ export class AuthService{
             //if authInformation > 0 that means we're still valid
             const expiresIn = authInformation.expirationDate.getTime() - now.getTime();
             if(expiresIn > 0){
-                this.token = authInformation.token;
-                this.isAuthenticated = true;
-                this.userId = authInformation.userId;
-                this.setAuthTime(expiresIn); //in milliseconds
-                this.authStatusListener.next(true);
+                this.httpClient.get<{id: string, email: string, admin: boolean}>(this.USER_URL+authInformation.userId)
+                    .subscribe(
+                        response =>{
+                            this.token = authInformation.token;
+                            this.isAuthenticated = true;
+                            this.userData = {
+                                userId: response.id, 
+                                admin: response.admin
+                            };
+                            this.setAuthTime(expiresIn); //in milliseconds
+                            this.authStatusListener.next(true);
+                        },
+                        error => {
+                            this.authStatusListener.next(false);
+                        }
+                    );
             }
         }
     }

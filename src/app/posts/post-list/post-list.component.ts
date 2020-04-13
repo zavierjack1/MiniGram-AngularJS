@@ -17,6 +17,7 @@ export class PostListComponent implements OnInit, OnDestroy{
     currentPage = 1;
     posts: Post[] = [];
     userId: string;
+    //userIsAdmin: boolean;
     public userIsAuthenticated = false;
     private authStatusSub: Subscription;
     private postsSub: Subscription;
@@ -43,7 +44,7 @@ export class PostListComponent implements OnInit, OnDestroy{
         this.postService.getPosts(this.postsPerPage, this.currentPage);
 
         this.userIsAuthenticated = this.authService.getIsAuthenticated();
-        //setups us subscription
+        //setup user subscription
         this.authStatusSub = this.authService
             .getAuthStatusListener()
             .subscribe(isAuthenticated => {
