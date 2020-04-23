@@ -15,7 +15,7 @@ similarly, you couldve added this class to the Providers array in app.module.ts 
 export class AuthService{
     private token: string;
     private tokenTimer: any;
-    private userData: {userId: string, admin: boolean}; 
+    private userData: {userId: string, email: string, admin: boolean}; 
     private isAuthenticated: boolean = false;
     private authStatusListener = new Subject<boolean>();
     private USER_URL: string = environment.nodeUrl+'/api/user/';
@@ -102,6 +102,7 @@ export class AuthService{
                             this.isAuthenticated = true;
                             this.userData = {
                                 userId: response.id, 
+                                email: response.email, 
                                 admin: response.admin
                             };
                             this.setAuthTime(expiresIn); //in milliseconds
