@@ -22,6 +22,7 @@ export class PostCreateComponent implements OnInit, OnDestroy{
     isLoading = false;
     form: FormGroup;
     imagePreview: string;
+    imageFromBackend: boolean;
     private postId: string; 
     private mode: Number; //create mode or edit mode
     private authStatusSub: Subscription;
@@ -68,14 +69,15 @@ export class PostCreateComponent implements OnInit, OnDestroy{
                         createdByEmail: postData.createdByEmail
                     };
                     this.isLoading = false;
-
+                    this.imagePreview = this.post.imagePath;
+                    this.imageFromBackend = true;
                     this.form.setValue(
                         {
                             title: this.post.title,
                             content: this.post.content,
                             image: this.post.imagePath
                         }
-                    )
+                    );
                 });
             }
             else{
@@ -88,6 +90,7 @@ export class PostCreateComponent implements OnInit, OnDestroy{
     onSavePost(){
         if (this.form.invalid) return;
         this.isLoading = true;//no need to set back to false because we're leaving page and when we come back we set back to false
+        this.imageFromBackend = false;
         if (this.mode === Mode.CREATE) {
             this.postService.addPost(
                 this.form.value.title, 
