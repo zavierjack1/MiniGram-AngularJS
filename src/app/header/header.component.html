@@ -1,5 +1,6 @@
 <mat-toolbar color="primary">
-    <span><a routerLink="/">My Messages</a></span>
+    <a mat-button routerLink="/" *ngIf="!userIsAuthenticated">Welcome to MiniGram!</a>
+    <a mat-button routerLink="/" *ngIf="userIsAuthenticated">{{userData.email}}</a>
     <span class="spacer"></span>
     <ul>
         <li *ngIf="userIsAuthenticated"> 

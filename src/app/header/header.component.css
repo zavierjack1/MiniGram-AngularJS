@@ -8,9 +8,11 @@ ul {
 a {
     text-decoration: none;
     color: white;
+    display: flex;
 }
 
 .spacer {
     /*tells spacer to use all avaiable space*/
     flex: 1 1 auto;
 }
+
