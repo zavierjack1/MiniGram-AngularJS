@@ -12,6 +12,10 @@ mat-card{
     width: 80vw;
 } 
 
+mat-card-actions{
+    float: right;
+}
+
 .postWrapper{
     display: flex;
     justify-content: center;

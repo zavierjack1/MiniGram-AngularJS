@@ -12,7 +12,7 @@ import { AuthService } from '../../auth/auth.service';
 })
 export class PostListComponent implements OnInit, OnDestroy{
     totalPosts = 0;
-    postsPerPage = 2;
+    postsPerPage = 5;
     pageSizeOptions = [1,2,5,10];
     currentPage = 1;
     posts: Post[] = [];
