@@ -16,3 +16,12 @@ a {
     flex: 1 1 auto;
 }
 
+mat-toolbar {
+    Position: sticky;
+    Position: webkit-sticky;
+    Top: 0;
+    z-index: 1000;
+}
+
+
+
