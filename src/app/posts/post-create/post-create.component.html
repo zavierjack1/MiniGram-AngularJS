@@ -1,5 +1,5 @@
 <!--ngModel is for two way binding and must be added to imports in app.module.ts-->
-<mat-card>
+<mat-card class="animated fadeIn">
     <mat-spinner *ngIf="isLoading"></mat-spinner>
     <form [formGroup]="form" (submit)="onSavePost()" *ngIf="!isLoading">
         <mat-form-field>
