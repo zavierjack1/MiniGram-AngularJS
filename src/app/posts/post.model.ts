@@ -5,4 +5,5 @@ export interface Post{
     imagePath: string;
     createdBy: string; //created by mongo ID
     createdByEmail: string;
+    likedBy?: string[];
 }
