@@ -93,4 +93,8 @@ export class PostService{
                 this.router.navigate(['/']);
             });        
     }
+
+    likePost(post_id: string, liked: boolean){
+        this.httpClient.put<{message: string}>(this.POSTS_URL+post_id, liked);
+    }
 }

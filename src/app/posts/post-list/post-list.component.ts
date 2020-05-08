@@ -18,6 +18,7 @@ export class PostListComponent implements OnInit, OnDestroy{
     posts: Post[] = [];
     userId: string;
     userData: {userId: string, email: string, admin: boolean}; 
+    liked: boolean;
     //userIsAdmin: boolean;
     public userIsAuthenticated = false;
     private authStatusSub: Subscription;
@@ -34,6 +35,7 @@ export class PostListComponent implements OnInit, OnDestroy{
     }
     
     ngOnInit(): void {
+        this.liked = true;
         this.isLoading = true;
         this.userId = this.authService.getUserId();
         this.userData = this.authService.getUserData();
@@ -70,5 +72,14 @@ export class PostListComponent implements OnInit, OnDestroy{
         error => {
             this.isLoading = false;
         });
+    }
+    
+    onLike(): void{
+        this.liked = !this.liked;
+        //send like or dislike to server
+        /*
+        //dont subscribe, we dont care
+        this.postService.likePost(this.liked);
+        */
     }
 }
