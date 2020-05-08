@@ -4,7 +4,7 @@ import { PostService } from '../post.service';
 import { Subscription } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
 import { AuthService } from '../../auth/auth.service';
-
+ 
 @Component({
     selector: 'app-post-list',
     templateUrl: './post-list.component.html',
@@ -15,11 +15,9 @@ export class PostListComponent implements OnInit, OnDestroy{
     postsPerPage = 5;
     pageSizeOptions = [1,2,5,10];
     currentPage = 1;
-    posts: Post[] = [];
+    posts: Post[] = []; 
     userId: string;
     userData: {userId: string, email: string, admin: boolean}; 
-    liked: boolean;
-    //userIsAdmin: boolean;
     public userIsAuthenticated = false;
     private authStatusSub: Subscription;
     private postsSub: Subscription;
@@ -35,7 +33,6 @@ export class PostListComponent implements OnInit, OnDestroy{
     }
     
     ngOnInit(): void {
-        this.liked = true;
         this.isLoading = true;
         this.userId = this.authService.getUserId();
         this.userData = this.authService.getUserData();
@@ -43,6 +40,7 @@ export class PostListComponent implements OnInit, OnDestroy{
         this.postsSub = this.postService.getPostUpdatedListener()
             .subscribe((postData: {posts: Post[], postCount: number}) =>{
                 this.posts = postData.posts;
+                console.log(this.posts);
                 this.totalPosts = postData.postCount;
                 this.isLoading = false;
             });
@@ -74,12 +72,37 @@ export class PostListComponent implements OnInit, OnDestroy{
         });
     }
     
-    onLike(): void{
-        this.liked = !this.liked;
-        //send like or dislike to server
-        /*
-        //dont subscribe, we dont care
-        this.postService.likePost(this.liked);
-        */
+    onLike(postId: string): void{
+        let userLikedPost: boolean;
+        if (this.posts.find(post => {return post.id == postId}).likedBy.includes(this.userData.userId)){
+            userLikedPost = true;
+        } 
+        else{
+            userLikedPost = false;
+        }
+        this.postService.likePost(postId, !userLikedPost).subscribe((res) => {
+            //if the user didnt like this post, then we are LIKING the post, add user to likedBy
+            if (!userLikedPost){
+                //in-memory add this user to the liked by array or remove user from liked by array
+                let likedPost = this.posts.find(post => {
+                    return post.id == postId
+                });  
+ 
+                likedPost.likedBy.push(this.userData.userId);
+            }
+            //if the user did like the post, then we are UNLIKING the post, remove the user from likeBy
+            else{
+                let likedPost = this.posts.find(post => {
+                    return post.id == postId
+                });  
+    
+                likedPost.likedBy = likedPost.likedBy.filter(userId => {
+                    return userId != this.userData.userId;
+                });
+            }
+        }, 
+        error =>{
+            console.log("error onLike: "+error);
+        }); 
     }
 }

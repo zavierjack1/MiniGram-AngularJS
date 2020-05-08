@@ -31,7 +31,8 @@ export class PostService{
                                 content: post.content,
                                 imagePath: post.imagePath,
                                 createdBy: post.createdBy, 
-                                createdByEmail: post.createdByEmail
+                                createdByEmail: post.createdByEmail,
+                                likedBy: post.likedBy
                             };
                         }),
                         postCount: postData.postCount
@@ -68,7 +69,7 @@ export class PostService{
         .subscribe((responseData) =>{
             this.router.navigate(['/']);
         });
-    }
+    } 
 
     deletePost(postId: string){
         return this.httpClient.delete<{message: string}>(this.POSTS_URL+postId);
@@ -93,8 +94,9 @@ export class PostService{
                 this.router.navigate(['/']);
             });        
     }
-
+ 
     likePost(post_id: string, liked: boolean){
-        this.httpClient.put<{message: string}>(this.POSTS_URL+post_id, liked);
+        const postLiked = {liked: liked};
+        return this.httpClient.put<{message: string}>(this.POSTS_URL+'likePost/'+post_id, postLiked);
     }
 }
